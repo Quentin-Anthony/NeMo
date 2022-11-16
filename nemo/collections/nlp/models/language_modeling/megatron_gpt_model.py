@@ -356,7 +356,7 @@ class MegatronGPTModel(MegatronBaseModel, TextGeneration):
         timer.stop("step")
         iter_time_s = timer.get("step")
         timer.reset("step")
-        flops_per_s_per_gpu = get_flops(self.cfg.data.seq_length, self.cfg.hidden_size, self.cfg.num_layers, self.model.total_params, self.cfg.global_batch_size, iter_time_s)
+        tflops_per_s_per_gpu = get_flops(self.cfg.data.seq_length, self.cfg.hidden_size, self.cfg.num_layers, self.model.total_params, self.cfg.global_batch_size, iter_time_s) / 1.0e12
         ## logging
         # we can only log on one rank if it is rank zero so we broadcast from last rank
         # we can avoid this broadcast by updating the PTL log function to accept specific ranks
@@ -367,7 +367,7 @@ class MegatronGPTModel(MegatronBaseModel, TextGeneration):
             if loss_scale is not None:
                 self.log('loss_scale', loss_scale)
 
-        self.log('Tflops_per_gpu', flops_per_s_per_gpu, prog_bar=True, rank_zero_only=True)
+        self.log('TFLOPS_per_gpu', tflops_per_s_per_gpu, prog_bar=True, rank_zero_only=True)
         self.log('reduced_train_loss', loss_mean, prog_bar=True, rank_zero_only=True)
         lr = self._optimizer.param_groups[0]['lr']
         self.log('lr', lr, rank_zero_only=True)

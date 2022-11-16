@@ -299,6 +299,7 @@ class MegatronLMEncoderDecoderModel(MegatronBaseModel):
             Microbatches are then moved to GPU during the pipeline.
             The list of microbatches is then piped through the pipeline using Apex fwd/bwd functions.
         """
+
         # we zero grads here because we also call backward in the apex fwd/bwd functions
         self._optimizer.zero_grad()
         # we prepare the micro batches for the apex fwd/bwd function
